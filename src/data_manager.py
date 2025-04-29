@@ -17,9 +17,12 @@ class DataManager:
         self.chunk_length = chunk_length
         self.replication_factor = replication_factor
 
-        self.spaces = [DataSpace.remote() for _ in range(10)]
+        self.spaces = []
         self.spaces_blackset = set()
         self.artifacts = {}
+
+    def add_space(self, space):
+        self.spaces.append(space)
 
     def add(self, name, data):
         if name in self.artifacts.keys():

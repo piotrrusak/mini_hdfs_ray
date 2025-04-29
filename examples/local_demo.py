@@ -9,8 +9,8 @@ from src.logger import setup_logging
 setup_logging(logging.INFO) # logging.INFO/logging.WARNING/logging.ERROR/logging.DEBUG
 
 from src.data_manager import DataManager
-
 from src.auto_healer import AutoHealer
+from src.data_space import DataSpace
 
 import ray
 import time
@@ -19,6 +19,10 @@ ray.init()
 
 dm = DataManager.remote(15, 2)
 
+for _ in range(10):
+    space = DataSpace.remote()
+    dm.add_space.remote(space)
+
 ah = AutoHealer.remote(dm)
 ah.run.remote()
 
@@ -26,7 +30,7 @@ ray.get(dm.add.remote("test", "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvw
 
 time.sleep(2)
 
-logger.info(f"Result: {ray.get(dm.get.remote('test'))}")
+logger.warning(f"Result: {ray.get(dm.get.remote('test'))}")
 
 dm.kill.remote(2)
 
@@ -36,7 +40,7 @@ ray.get(dm.update.remote("test", "xyz"))
 
 time.sleep(2)
 
-logger.info(f"Result: {ray.get(dm.get.remote('test'))}")
+logger.warning(f"Result: {ray.get(dm.get.remote('test'))}")
 
 time.sleep(2)
 
@@ -50,4 +54,4 @@ time.sleep(1)
 
 dm.list_spaces.remote()
 
-logger.info(f"Result: {ray.get(dm.get.remote('test'))}")
+logger.warning(f"Result: {ray.get(dm.get.remote('test'))}")

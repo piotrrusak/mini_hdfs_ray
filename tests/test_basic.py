@@ -10,12 +10,16 @@ import random
 
 from src.data_manager import DataManager
 from src.auto_healer import AutoHealer
+from src.data_space import DataSpace
 
 ray.init(ignore_reinit_error=True)
 
 @pytest.fixture(scope="module")
 def setup_system():
     dm = DataManager.remote(chunk_length=5, replication_factor=2)
+    for _ in range(10):
+        space = DataSpace.remote()
+        dm.add_space.remote(space)
     ah = AutoHealer.remote(dm)
     ah.run.remote()
     time.sleep(1)
